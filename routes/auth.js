@@ -15,4 +15,10 @@ router.post(
   AuthControl.login
 );
 
+router.post(
+  "/google",
+  [check("token", "El token es obligatorio").not().isEmpty(), validarCampos],
+  AuthControl.googleSingIn
+);
+
 module.exports = router;
