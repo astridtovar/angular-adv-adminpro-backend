@@ -1,4 +1,5 @@
 const { response } = require("express");
+const hospital = require("./../models/hospital");
 
 const Hospital = require("./../models/hospital");
 
@@ -23,26 +24,76 @@ const crearHospital = async (req, res = response) => {
     });
   } catch (error) {
     res.status(500).json({
-      error: 0,
+      error: 1,
       response: "Error inesperado",
     });
   }
 };
 
 const actualizarHospital = async (req, res = response) => {
-  res.status(200).json({
-    error: 0,
-    response: "PUT",
-  });
+  const id = req.params.id;
+  const uid = req.uid;
+
+  try {
+    const hospitalDB = await Hospital.findById(id);
+
+    if (!hospitalDB) {
+      res.status(404).json({
+        error: 1,
+        response: "El hospital no existe",
+      });
+    }
+
+    const cambiosHospital = {
+      ...req.body,
+      usuario: uid,
+    };
+
+    const hospitalActualizado = await Hospital.findByIdAndUpdate(
+      id,
+      cambiosHospital,
+      { new: true }
+    );
+
+    res.status(200).json({
+      error: 0,
+      response: hospitalActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: 1,
+      response: "Error inesperado",
+    });
+  }
 };
 
 const eliminarHospital = async (req, res = response) => {
-  const uid = req.params.id;
+  const id = req.params.id;
 
-  res.status(200).json({
-    error: 0,
-    response: "Hospital eliminado",
-  });
+  try {
+    const hospitalDB = await Hospital.findById(id);
+
+    if (!hospitalDB) {
+      res.status(404).json({
+        error: 1,
+        response: "El hospital no existe",
+      });
+    }
+
+    await Hospital.findByIdAndDelete(id);
+
+    res.status(200).json({
+      error: 0,
+      response: "Hospital eliminado",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: 1,
+      response: "Error inesperado",
+    });
+  }
 };
 
 module.exports = {
