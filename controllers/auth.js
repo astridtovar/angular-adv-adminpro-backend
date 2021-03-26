@@ -88,9 +88,11 @@ const renewToken = async (req, res = response) => {
   // Generar Token
   const token = await generarJWT(uid);
 
+  const usuario = await Usuario.findById(uid, "nombre email role google img");
+
   res.status(200).json({
     error: 0,
-    response: token,
+    response: {token, usuario},
   });
 };
 
