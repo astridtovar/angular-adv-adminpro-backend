@@ -27,5 +27,6 @@ router.put("/:id", [
     validarCampos
 ], MedicoControl.actualizarMedico);
 router.delete("/:id", validarJWT, MedicoControl.eliminarMedico);
+router.get("/:id", validarJWT, MedicoControl.getMedicosById);
 
 module.exports = router;
